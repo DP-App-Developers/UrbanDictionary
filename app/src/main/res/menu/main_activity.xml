@@ -4,8 +4,11 @@
           android:icon="@drawable/ic_search_white_24dp"
           app:actionViewClass="androidx.appcompat.widget.SearchView"
           android:title="@string/menu_search"
-          app:showAsAction="ifRoom|collapseActionView"/>
-    <item android:id="@+id/menu_sort_by"
+          app:showAsAction="always|collapseActionView"/>
+    <item android:id="@+id/menu_sort_by_most_thumbs_up"
           app:showAsAction="never"
-          android:title="@string/menu_sort_by" />
+          android:title="@string/menu_sort_by_most_thumbs_up" />
+    <item android:id="@+id/menu_sort_by_most_thumbs_down"
+          app:showAsAction="never"
+          android:title="@string/menu_sort_by_most_thumbs_down" />
 </menu>

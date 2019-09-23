@@ -18,11 +18,11 @@ interface DefinitionDao {
     fun getDefinitionsSortByThumbsDown(word: String): LiveData<List<Definition>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(definition: Definition)
+    suspend fun insert(definition: List<Definition>)
 
     @Query("DELETE FROM definition_table")
     suspend fun deleteAll()
 
-    @Query("DELETE FROM definition_table WHERE word = :word")
+    @Query("DELETE FROM definition_table WHERE lower(word) = :word")
     suspend fun deleteWord(word: String)
 }

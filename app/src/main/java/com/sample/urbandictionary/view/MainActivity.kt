@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var definitionViewModel: DefinitionViewModel
     private lateinit var adapter: DefinitionRecyclerAdapter
+    private lateinit var userSearchInput: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +37,8 @@ class MainActivity : AppCompatActivity() {
         val searchView = searchItem.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(s: String): Boolean {
-                val word = s.trim().toLowerCase()
-                definitionViewModel.loadDefinitions(word).observe(this@MainActivity, Observer { definitions ->
+                userSearchInput = s.trim().toLowerCase()
+                definitionViewModel.loadDefinitionsSortByThumbsUp(userSearchInput).observe(this@MainActivity, Observer { definitions ->
                     definitions?.let { adapter.setDefinitions(it) }
                 })
                 searchView.clearFocus()
@@ -53,10 +54,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            R.id.menu_sort_by -> {
+            R.id.menu_sort_by_most_thumbs_up -> {
+                definitionViewModel.loadDefinitionsSortByThumbsUp(userSearchInput).observe(this@MainActivity, Observer { definitions ->
+                    definitions?.let { adapter.setDefinitions(it) }
+                })
+                true
+            }
+            R.id.menu_sort_by_most_thumbs_down -> {
+                definitionViewModel.loadDefinitionsSortByThumbsDown(userSearchInput).observe(this@MainActivity, Observer { definitions ->
+                    definitions?.let { adapter.setDefinitions(it) }
+                })
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 }
