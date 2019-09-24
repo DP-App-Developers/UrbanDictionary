@@ -1,5 +1,7 @@
 package com.sample.urbandictionary
 
+import com.sample.urbandictionary.model.Definition
+import org.hamcrest.CoreMatchers.`is`
 import org.junit.Test
 
 import org.junit.Assert.*
