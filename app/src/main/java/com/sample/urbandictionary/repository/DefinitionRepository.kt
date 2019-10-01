@@ -12,7 +12,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DefinitionRepository(private val definitionDao: DefinitionDao) {
+open class DefinitionRepository(private val definitionDao: DefinitionDao) {
 
     private val urbanDictionaryService by lazy {
         UrbanDictionaryService.create()
@@ -32,13 +32,10 @@ class DefinitionRepository(private val definitionDao: DefinitionDao) {
         val definitionList = urbanDictionaryService.getDefinitions(word)
         definitionList.enqueue(object : Callback<DefinitionList> {
             override fun onResponse(call: Call<DefinitionList>, response: Response<DefinitionList>) {
-                val definitions = response.body()?.definitionList
                 if (response.isSuccessful) {
+                    val definitions = response.body()?.definitionList
                     CoroutineScope(Dispatchers.IO).launch {
-                        definitionDao.deleteWord(word) // delete old cache
-                        if (!definitions.isNullOrEmpty()) {
-                            definitionDao.insert(definitions)
-                        }
+                        definitionDao.updateWord(word, definitions)
                     }
                 }
             }

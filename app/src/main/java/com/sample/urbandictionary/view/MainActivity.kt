@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.sample.urbandictionary.R
 import com.sample.urbandictionary.viewmodel.DefinitionViewModel
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +30,9 @@ class MainActivity : AppCompatActivity() {
         recyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
 
         definitionViewModel = ViewModelProviders.of(this).get(DefinitionViewModel::class.java)
+        definitionViewModel.data.observe(this, Observer { definitions ->
+            definitions?.let { adapter.setDefinitions(it) }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -40,9 +43,7 @@ class MainActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(s: String): Boolean {
                 userSearchInput = s.trim().toLowerCase()
-                definitionViewModel.loadDefinitionsSortByThumbsUp(userSearchInput).observe(this@MainActivity, Observer { definitions ->
-                    definitions?.let { adapter.setDefinitions(it) }
-                })
+                definitionViewModel.loadDefinitionsSortByThumbsUp(userSearchInput)
                 searchView.clearFocus()
                 return true
             }
@@ -56,16 +57,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            com.sample.urbandictionary.R.id.menu_sort_by_most_thumbs_up -> {
-                definitionViewModel.loadDefinitionsSortByThumbsUp(userSearchInput).observe(this@MainActivity, Observer { definitions ->
-                    definitions?.let { adapter.setDefinitions(it) }
-                })
+            R.id.menu_sort_by_most_thumbs_up -> {
+                definitionViewModel.loadDefinitionsSortByThumbsUp(userSearchInput)
                 true
             }
-            com.sample.urbandictionary.R.id.menu_sort_by_most_thumbs_down -> {
-                definitionViewModel.loadDefinitionsSortByThumbsDown(userSearchInput).observe(this@MainActivity, Observer { definitions ->
-                    definitions?.let { adapter.setDefinitions(it) }
-                })
+            R.id.menu_sort_by_most_thumbs_down -> {
+                definitionViewModel.loadDefinitionsSortByThumbsDown(userSearchInput)
                 true
             }
             else -> super.onOptionsItemSelected(item)

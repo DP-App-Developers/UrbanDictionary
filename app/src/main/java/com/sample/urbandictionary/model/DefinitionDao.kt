@@ -1,10 +1,7 @@
 package com.sample.urbandictionary.model
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface DefinitionDao {
@@ -18,11 +15,20 @@ interface DefinitionDao {
     fun getDefinitionsSortByThumbsDown(word: String): LiveData<List<Definition>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(definition: List<Definition>)
+    suspend fun insert(definitions: List<Definition>)
 
     @Query("DELETE FROM definition_table")
     suspend fun deleteAll()
 
     @Query("DELETE FROM definition_table WHERE lower(word) = :word")
     suspend fun deleteWord(word: String)
+
+    @Transaction
+    suspend fun updateWord(word: String, definitions: List<Definition>?) {
+        deleteWord(word)
+        definitions?.let {
+            insert(it)
+        }
+    }
+
 }
